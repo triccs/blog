@@ -57,19 +57,19 @@ function resolveImagePath(imagePath) {
 
 // Get posts URL - use relative path that works everywhere
 function getPostsUrl() {
-    let currentPath = window.location.pathname;
+    const currentPath = window.location.pathname;
     
-    // If we're in /posts/ subdirectory, go up one level
-    if (currentPath.includes('/posts/')) {
+    // If we're in /posts/ subdirectory (static HTML files), go up one level
+    if (currentPath.includes('/posts/') && currentPath.endsWith('.html')) {
         return '../posts/posts.json';
     }
     
-    // Ensure path ends with / for directory resolution
-    if (!currentPath.endsWith('/') && !currentPath.includes('.')) {
-        currentPath += '/';
+    // If we're at /posts/ directory itself
+    if (currentPath.endsWith('/posts/') || currentPath === '/posts') {
+        return 'posts.json';
     }
     
-    // Remove filename to get directory (if it's an HTML file)
+    // For root level pages (index.html, post.html)
     let dir = currentPath;
     if (currentPath.includes('.html')) {
         dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
