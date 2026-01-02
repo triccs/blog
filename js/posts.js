@@ -3,37 +3,19 @@
  * Handles loading, rendering, and filtering blog posts
  */
 
-// Get posts URL - works for both local and GitHub Pages
+// Get posts URL - use relative path that works everywhere
 function getPostsUrl() {
-    // Get the current script's directory
-    const scripts = document.getElementsByTagName('script');
-    let scriptPath = '';
-    for (let script of scripts) {
-        if (script.src && script.src.includes('posts.js')) {
-            const url = new URL(script.src);
-            scriptPath = url.pathname;
-            break;
-        }
-    }
+    // Use relative path from current page location
+    // If we're at /blog/index.html, this becomes /blog/posts/posts.json
+    // If we're at /blog/post.html, this becomes /blog/posts/posts.json
+    // If we're at localhost:8080/index.html, this becomes /posts/posts.json
+    const currentPath = window.location.pathname;
     
-    // If we found the script path, use it to determine base
-    if (scriptPath) {
-        // Remove the filename to get the directory
-        const baseDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
-        // Go up one level from js/ to root, then into posts/
-        return baseDir.replace('/js', '') + '/posts/posts.json';
-    }
+    // Remove filename to get directory
+    const dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
     
-    // Fallback: detect from current path
-    const path = window.location.pathname;
-    const cleanPath = path.replace(/\/$/, '');
-    const parts = cleanPath.split('/').filter(p => p);
-    
-    if (parts.length > 0 && parts[0] === 'blog') {
-        return '/blog/posts/posts.json';
-    }
-    
-    return '/posts/posts.json';
+    // Build relative path to posts.json
+    return dir + 'posts/posts.json';
 }
 
 // State
