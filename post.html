@@ -27,6 +27,65 @@
     <!-- Canonical -->
     <link rel="canonical" href="" id="canonical">
     
+    <!-- CRITICAL: Set meta tags immediately for Twitter/iMessage crawlers (they don't execute JS) -->
+    <script>
+        // This MUST run synchronously in head before page loads
+        (function() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('id');
+                if (!postId) return;
+                
+                // Determine base path
+                const hostname = window.location.hostname;
+                const isGitHubPages = hostname.includes('github.io');
+                const basePath = isGitHubPages ? '/blog' : '';
+                const baseUrl = window.location.origin + basePath;
+                
+                // Synchronously fetch posts (this will block, but necessary for crawlers)
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', basePath + '/posts/posts.json', false); // false = synchronous
+                xhr.send();
+                
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    const post = data.posts.find(p => p.id === postId);
+                    if (post) {
+                        // Resolve image path
+                        const imagePath = post.coverImage.startsWith('http') 
+                            ? post.coverImage 
+                            : baseUrl + (post.coverImage.startsWith('/') ? post.coverImage : '/' + post.coverImage);
+                        
+                        const postUrl = baseUrl + '/post.html?id=' + postId;
+                        
+                        // Update meta tags in head - crawlers read these
+                        const ogTitle = document.querySelector('meta[property="og:title"]');
+                        const ogDesc = document.querySelector('meta[property="og:description"]');
+                        const ogImage = document.querySelector('meta[property="og:image"]');
+                        const ogUrl = document.querySelector('meta[property="og:url"]');
+                        const twTitle = document.querySelector('meta[name="twitter:title"]');
+                        const twDesc = document.querySelector('meta[name="twitter:description"]');
+                        const twImage = document.querySelector('meta[name="twitter:image"]');
+                        const descMeta = document.querySelector('meta[name="description"]');
+                        
+                        if (ogTitle) ogTitle.setAttribute('content', post.title);
+                        if (ogDesc) ogDesc.setAttribute('content', post.excerpt);
+                        if (ogImage) ogImage.setAttribute('content', imagePath);
+                        if (ogUrl) ogUrl.setAttribute('content', postUrl);
+                        if (twTitle) twTitle.setAttribute('content', post.title);
+                        if (twDesc) twDesc.setAttribute('content', post.excerpt);
+                        if (twImage) twImage.setAttribute('content', imagePath);
+                        if (descMeta) descMeta.setAttribute('content', post.excerpt);
+                        
+                        document.title = post.title + ' | DevLog';
+                    }
+                }
+            } catch(e) {
+                console.error('Failed to set meta tags:', e);
+            }
+        })();
+    </script>
+    
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
     
@@ -95,62 +154,8 @@
         <p>&copy; 2026 DevLog. Built with vanilla HTML, CSS & JS.</p>
     </footer>
 
-    <!-- Load scripts immediately (not deferred) so meta tags are set before iMessage crawler reads the page -->
-    <script>
-        // Inline script to set meta tags ASAP - runs synchronously in head
-        (function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('id');
-            if (postId) {
-                // Determine base path for GitHub Pages
-                const hostname = window.location.hostname;
-                const pathname = window.location.pathname;
-                const isGitHubPages = hostname.includes('github.io');
-                const basePath = isGitHubPages ? '/blog' : '';
-                const baseUrl = window.location.origin + basePath;
-                
-                // Fetch posts immediately and update meta tags
-                const postsUrl = basePath + '/posts/posts.json';
-                fetch(postsUrl)
-                    .then(r => r.json())
-                    .then(data => {
-                        const post = data.posts.find(p => p.id === postId);
-                        if (post) {
-                            // Resolve image path
-                            const imagePath = post.coverImage.startsWith('http') 
-                                ? post.coverImage 
-                                : baseUrl + (post.coverImage.startsWith('/') ? post.coverImage : '/' + post.coverImage);
-                            
-                            const postUrl = baseUrl + '/post.html?id=' + postId;
-                            
-                            // Update meta tags immediately - iMessage crawler reads these
-                            const ogTitle = document.querySelector('meta[property="og:title"]');
-                            const ogDesc = document.querySelector('meta[property="og:description"]');
-                            const ogImage = document.querySelector('meta[property="og:image"]');
-                            const ogUrl = document.querySelector('meta[property="og:url"]');
-                            const twTitle = document.querySelector('meta[name="twitter:title"]');
-                            const twDesc = document.querySelector('meta[name="twitter:description"]');
-                            const twImage = document.querySelector('meta[name="twitter:image"]');
-                            
-                            if (ogTitle) ogTitle.content = post.title;
-                            if (ogDesc) ogDesc.content = post.excerpt;
-                            if (ogImage) ogImage.content = imagePath;
-                            if (ogUrl) ogUrl.content = postUrl;
-                            if (twTitle) twTitle.content = post.title;
-                            if (twDesc) twDesc.content = post.excerpt;
-                            if (twImage) twImage.content = imagePath;
-                            
-                            document.title = post.title + ' | DevLog';
-                            const descMeta = document.querySelector('meta[name="description"]');
-                            if (descMeta) descMeta.content = post.excerpt;
-                        }
-                    })
-                    .catch(e => console.error('Failed to load post for meta tags:', e));
-            }
-        })();
-    </script>
-    <script src="js/seo.js"></script>
-    <script src="js/posts.js"></script>
+    <script src="js/seo.js" defer></script>
+    <script src="js/posts.js" defer></script>
 </body>
 </html>
 
