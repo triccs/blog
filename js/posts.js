@@ -3,25 +3,37 @@
  * Handles loading, rendering, and filtering blog posts
  */
 
-// Get base path for GitHub Pages subdirectory support
-function getBasePath() {
+// Get posts URL - works for both local and GitHub Pages
+function getPostsUrl() {
+    // Get the current script's directory
+    const scripts = document.getElementsByTagName('script');
+    let scriptPath = '';
+    for (let script of scripts) {
+        if (script.src && script.src.includes('posts.js')) {
+            const url = new URL(script.src);
+            scriptPath = url.pathname;
+            break;
+        }
+    }
+    
+    // If we found the script path, use it to determine base
+    if (scriptPath) {
+        // Remove the filename to get the directory
+        const baseDir = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+        // Go up one level from js/ to root, then into posts/
+        return baseDir.replace('/js', '') + '/posts/posts.json';
+    }
+    
+    // Fallback: detect from current path
     const path = window.location.pathname;
-    // Remove trailing slash and split
     const cleanPath = path.replace(/\/$/, '');
     const parts = cleanPath.split('/').filter(p => p);
     
-    // Check if we're in a subdirectory (like /blog/)
-    // GitHub Pages with repo name "blog" will have paths like /blog/ or /blog/index.html
     if (parts.length > 0 && parts[0] === 'blog') {
-        return '/blog';
+        return '/blog/posts/posts.json';
     }
-    // For local development or root deployment
-    return '';
-}
-
-// Calculate POSTS_URL dynamically
-function getPostsUrl() {
-    return getBasePath() + '/posts/posts.json';
+    
+    return '/posts/posts.json';
 }
 
 // State
