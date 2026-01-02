@@ -14,27 +14,20 @@ const AUTHOR_NAME = 'Your Name';
  */
 // Get base path for GitHub Pages subdirectory
 function getBasePath() {
-    const path = window.location.pathname;
     const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
     
-    // Check if we're on GitHub Pages (triccs.github.io)
+    // If we're on GitHub Pages, always use /blog as base path
     if (hostname.includes('github.io')) {
-        // Extract repo name from path or hostname
-        const cleanPath = path.replace(/\/$/, '');
-        const parts = cleanPath.split('/').filter(p => p);
-        
-        // If path starts with a segment that's not an HTML file, it's likely the repo name
-        if (parts.length > 0 && parts[0] !== '' && !parts[0].endsWith('.html')) {
-            return '/' + parts[0];
-        }
-        
-        // Fallback: check hostname for repo name
-        // triccs.github.io/blog means repo is "blog"
-        if (hostname.startsWith('triccs.github.io')) {
+        // Check if pathname already includes /blog
+        if (pathname.startsWith('/blog')) {
             return '/blog';
         }
+        // For triccs.github.io, the repo name is "blog"
+        return '/blog';
     }
     
+    // Local development - no base path
     return '';
 }
 
