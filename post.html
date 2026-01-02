@@ -11,11 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Open Graph (will be updated by seo.js) -->
+    <!-- Open Graph (will be updated by seo.js immediately) -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="" id="og-title">
-    <meta property="og:description" content="" id="og-description">
-    <meta property="og:image" content="" id="og-image">
+    <meta property="og:title" content="Loading..." id="og-title">
+    <meta property="og:description" content="Loading post..." id="og-description">
+    <meta property="og:image" content="https://triccs.github.io/blog/images/og-default.svg" id="og-image">
     <meta property="og:url" content="" id="og-url">
     
     <!-- Twitter Card (will be updated by seo.js) -->
@@ -95,8 +95,62 @@
         <p>&copy; 2026 DevLog. Built with vanilla HTML, CSS & JS.</p>
     </footer>
 
-    <script src="js/seo.js" defer></script>
-    <script src="js/posts.js" defer></script>
+    <!-- Load scripts immediately (not deferred) so meta tags are set before iMessage crawler reads the page -->
+    <script>
+        // Inline script to set meta tags ASAP - runs synchronously in head
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id');
+            if (postId) {
+                // Determine base path for GitHub Pages
+                const hostname = window.location.hostname;
+                const pathname = window.location.pathname;
+                const isGitHubPages = hostname.includes('github.io');
+                const basePath = isGitHubPages ? '/blog' : '';
+                const baseUrl = window.location.origin + basePath;
+                
+                // Fetch posts immediately and update meta tags
+                const postsUrl = basePath + '/posts/posts.json';
+                fetch(postsUrl)
+                    .then(r => r.json())
+                    .then(data => {
+                        const post = data.posts.find(p => p.id === postId);
+                        if (post) {
+                            // Resolve image path
+                            const imagePath = post.coverImage.startsWith('http') 
+                                ? post.coverImage 
+                                : baseUrl + (post.coverImage.startsWith('/') ? post.coverImage : '/' + post.coverImage);
+                            
+                            const postUrl = baseUrl + '/post.html?id=' + postId;
+                            
+                            // Update meta tags immediately - iMessage crawler reads these
+                            const ogTitle = document.querySelector('meta[property="og:title"]');
+                            const ogDesc = document.querySelector('meta[property="og:description"]');
+                            const ogImage = document.querySelector('meta[property="og:image"]');
+                            const ogUrl = document.querySelector('meta[property="og:url"]');
+                            const twTitle = document.querySelector('meta[name="twitter:title"]');
+                            const twDesc = document.querySelector('meta[name="twitter:description"]');
+                            const twImage = document.querySelector('meta[name="twitter:image"]');
+                            
+                            if (ogTitle) ogTitle.content = post.title;
+                            if (ogDesc) ogDesc.content = post.excerpt;
+                            if (ogImage) ogImage.content = imagePath;
+                            if (ogUrl) ogUrl.content = postUrl;
+                            if (twTitle) twTitle.content = post.title;
+                            if (twDesc) twDesc.content = post.excerpt;
+                            if (twImage) twImage.content = imagePath;
+                            
+                            document.title = post.title + ' | DevLog';
+                            const descMeta = document.querySelector('meta[name="description"]');
+                            if (descMeta) descMeta.content = post.excerpt;
+                        }
+                    })
+                    .catch(e => console.error('Failed to load post for meta tags:', e));
+            }
+        })();
+    </script>
+    <script src="js/seo.js"></script>
+    <script src="js/posts.js"></script>
 </body>
 </html>
 
