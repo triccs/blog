@@ -12,15 +12,43 @@ const AUTHOR_NAME = 'Your Name';
  * Called from posts.js when rendering a single post
  * @param {Object} post - The post object with title, excerpt, coverImage, date, tags
  */
+// Resolve image path - handles both absolute and relative paths
+function resolveImagePath(imagePath) {
+    // If it's already a full URL, return as-is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+    }
+    
+    // Get base path for GitHub Pages subdirectory
+    const path = window.location.pathname;
+    const cleanPath = path.replace(/\/$/, '');
+    const parts = cleanPath.split('/').filter(p => p);
+    const basePath = parts.length > 0 && parts[0] === 'blog' ? '/blog' : '';
+    const baseUrl = window.location.origin + basePath;
+    
+    // If it starts with /, it's an absolute path - add base path for GitHub Pages
+    if (imagePath.startsWith('/')) {
+        return baseUrl + imagePath;
+    }
+    
+    // Relative path - resolve from current page location
+    const currentPath = window.location.pathname;
+    let dir = currentPath;
+    if (currentPath.includes('.html')) {
+        dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    } else if (!currentPath.endsWith('/')) {
+        dir = currentPath + '/';
+    }
+    return window.location.origin + dir + imagePath;
+}
+
 function updateSEO(post) {
     // Get base URL - handle GitHub Pages subdirectory
     const pathParts = window.location.pathname.split('/').filter(p => p);
-    const basePath = pathParts.length > 1 ? '/' + pathParts[0] : '';
+    const basePath = pathParts.length > 0 && pathParts[0] === 'blog' ? '/blog' : '';
     const baseUrl = window.location.origin + basePath;
     const postUrl = `${baseUrl}/post.html?id=${post.id}`;
-    const imageUrl = post.coverImage.startsWith('http') 
-        ? post.coverImage 
-        : `${baseUrl}${post.coverImage}`;
+    const imageUrl = resolveImagePath(post.coverImage);
     
     // Update page title (browser tab)
     document.title = `${post.title} | ${SITE_NAME}`;

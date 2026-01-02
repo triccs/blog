@@ -3,6 +3,41 @@
  * Handles loading, rendering, and filtering blog posts
  */
 
+// Get base path for GitHub Pages subdirectory
+function getBasePath() {
+    const path = window.location.pathname;
+    const cleanPath = path.replace(/\/$/, '');
+    const parts = cleanPath.split('/').filter(p => p);
+    
+    if (parts.length > 0 && parts[0] === 'blog') {
+        return '/blog';
+    }
+    return '';
+}
+
+// Resolve image path - handles both absolute and relative paths
+function resolveImagePath(imagePath) {
+    // If it's already a full URL, return as-is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+    }
+    
+    // If it starts with /, it's an absolute path - add base path for GitHub Pages
+    if (imagePath.startsWith('/')) {
+        return getBasePath() + imagePath;
+    }
+    
+    // Relative path - resolve from current page location
+    const currentPath = window.location.pathname;
+    let dir = currentPath;
+    if (currentPath.includes('.html')) {
+        dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    } else if (!currentPath.endsWith('/')) {
+        dir = currentPath + '/';
+    }
+    return dir + imagePath;
+}
+
 // Get posts URL - use relative path that works everywhere
 function getPostsUrl() {
     let currentPath = window.location.pathname;
@@ -169,12 +204,14 @@ function renderPosts(posts) {
         return;
     }
     
-    grid.innerHTML = posts.map(post => `
+    grid.innerHTML = posts.map(post => {
+        const imageUrl = resolveImagePath(post.coverImage);
+        return `
         <article class="post-card">
             <a href="post.html?id=${post.id}" class="post-card-link">
                 <div class="post-card-image">
                     <img 
-                        src="${post.coverImage}" 
+                        src="${imageUrl}" 
                         alt="${post.title}"
                         loading="lazy"
                     >
@@ -194,7 +231,8 @@ function renderPosts(posts) {
                 </div>
             </div>
         </article>
-    `).join('');
+    `;
+    }).join('');
 }
 
 /**
@@ -234,9 +272,10 @@ function renderSinglePost(postId) {
     // Render cover image
     const coverEl = document.getElementById('postCover');
     if (coverEl) {
+        const imageUrl = resolveImagePath(post.coverImage);
         coverEl.innerHTML = `
             <img 
-                src="${post.coverImage}" 
+                src="${imageUrl}" 
                 alt="${post.title}"
             >
         `;
