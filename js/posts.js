@@ -5,17 +5,27 @@
 
 // Get posts URL - use relative path that works everywhere
 function getPostsUrl() {
-    // Use relative path from current page location
-    // If we're at /blog/index.html, this becomes /blog/posts/posts.json
-    // If we're at /blog/post.html, this becomes /blog/posts/posts.json
-    // If we're at localhost:8080/index.html, this becomes /posts/posts.json
-    const currentPath = window.location.pathname;
+    let currentPath = window.location.pathname;
     
-    // Remove filename to get directory
-    const dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    // Ensure path ends with / for directory resolution
+    if (!currentPath.endsWith('/') && !currentPath.includes('.')) {
+        currentPath += '/';
+    }
+    
+    // Remove filename to get directory (if it's an HTML file)
+    let dir = currentPath;
+    if (currentPath.includes('.html')) {
+        dir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    } else if (!currentPath.endsWith('/')) {
+        dir = currentPath + '/';
+    }
     
     // Build relative path to posts.json
-    return dir + 'posts/posts.json';
+    const url = dir + 'posts/posts.json';
+    console.log('Current pathname:', window.location.pathname);
+    console.log('Calculated directory:', dir);
+    console.log('Posts URL:', url);
+    return url;
 }
 
 // State
@@ -65,13 +75,27 @@ async function init() {
  */
 async function fetchPosts() {
     const url = getPostsUrl();
-    console.log('Fetching posts from:', url); // Debug log
-    const response = await fetch(url);
-    if (!response.ok) {
-        console.error('Failed to fetch posts:', response.status, response.statusText);
-        throw new Error(`Failed to fetch posts: ${response.status} ${response.statusText}`);
+    console.log('Fetching posts from:', url);
+    console.log('Full URL:', window.location.origin + url);
+    
+    try {
+        const response = await fetch(url);
+        console.log('Response status:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            // Try to get more details
+            const text = await response.text();
+            console.error('Response body:', text);
+            throw new Error(`Failed to fetch posts: ${response.status} ${response.statusText}. URL attempted: ${url}`);
+        }
+        
+        const data = await response.json();
+        console.log('Successfully loaded posts:', data.posts?.length || 0, 'posts');
+        return data;
+    } catch (error) {
+        console.error('Fetch error details:', error);
+        throw error;
     }
-    return response.json();
 }
 
 /**
