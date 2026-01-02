@@ -110,9 +110,11 @@ async function init() {
         
         if (isPostPage) {
             const postId = getPostIdFromUrl();
+            console.log('Post page detected, postId:', postId);
             if (postId) {
                 renderSinglePost(postId);
             } else {
+                console.error('No post ID found in URL');
                 showError('Post not found');
             }
         }
@@ -151,11 +153,22 @@ async function fetchPosts() {
 }
 
 /**
- * Get post ID from URL query parameter
+ * Get post ID from URL query parameter or filename
  */
 function getPostIdFromUrl() {
+    // First try query parameter (for post.html?id=...)
     const params = new URLSearchParams(window.location.search);
-    return params.get('id');
+    const queryId = params.get('id');
+    if (queryId) return queryId;
+    
+    // Otherwise, extract from filename (for posts/post-id.html)
+    const pathname = window.location.pathname;
+    const filename = pathname.split('/').pop(); // Get last part of path
+    if (filename && filename.endsWith('.html')) {
+        return filename.replace('.html', '');
+    }
+    
+    return null;
 }
 
 /**
