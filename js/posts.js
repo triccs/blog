@@ -6,15 +6,23 @@
 // Get base path for GitHub Pages subdirectory support
 function getBasePath() {
     const path = window.location.pathname;
+    // Remove trailing slash and split
+    const cleanPath = path.replace(/\/$/, '');
+    const parts = cleanPath.split('/').filter(p => p);
+    
     // Check if we're in a subdirectory (like /blog/)
-    if (path.startsWith('/blog/') || path === '/blog') {
+    // GitHub Pages with repo name "blog" will have paths like /blog/ or /blog/index.html
+    if (parts.length > 0 && parts[0] === 'blog') {
         return '/blog';
     }
     // For local development or root deployment
     return '';
 }
 
-const POSTS_URL = getBasePath() + '/posts/posts.json';
+// Calculate POSTS_URL dynamically
+function getPostsUrl() {
+    return getBasePath() + '/posts/posts.json';
+}
 
 // State
 let allPosts = [];
@@ -62,8 +70,13 @@ async function init() {
  * Fetch posts from JSON file
  */
 async function fetchPosts() {
-    const response = await fetch(POSTS_URL);
-    if (!response.ok) throw new Error('Failed to fetch posts');
+    const url = getPostsUrl();
+    console.log('Fetching posts from:', url); // Debug log
+    const response = await fetch(url);
+    if (!response.ok) {
+        console.error('Failed to fetch posts:', response.status, response.statusText);
+        throw new Error(`Failed to fetch posts: ${response.status} ${response.statusText}`);
+    }
     return response.json();
 }
 
