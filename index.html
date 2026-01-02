@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevLog | A Developer's Journal</title>
+    <title>BraneTrix | A Developer's Journal</title>
     <meta name="description" content="Personal blog exploring web development, programming insights, and tech adventures.">
+    <meta name="author" content="BraneTrix">
     
     <!-- Preconnect for fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,16 +14,19 @@
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="DevLog | A Developer's Journal">
+    <meta property="og:title" content="BraneTrix | A Developer's Journal">
     <meta property="og:description" content="Personal blog exploring web development, programming insights, and tech adventures.">
     <meta property="og:image" content="https://triccs.github.io/blog/images/og-default.svg">
     <meta property="og:url" content="https://triccs.github.io/blog/">
+    <meta property="og:site_name" content="BraneTrix">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="DevLog | A Developer's Journal">
+    <meta name="twitter:title" content="BraneTrix | A Developer's Journal">
     <meta name="twitter:description" content="Personal blog exploring web development, programming insights, and tech adventures.">
     <meta name="twitter:image" content="https://triccs.github.io/blog/images/og-default.svg">
+    <meta name="twitter:site" content="@BraneTrix">
+    <meta name="twitter:creator" content="@BraneTrix">
     
     <!-- Canonical -->
     <link rel="canonical" href="https://triccs.github.io/blog/">
@@ -30,18 +34,33 @@
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
     
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data for LLM Attribution -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": "DevLog",
+        "name": "BraneTrix",
+        "alternateName": "BraneTrix Blog",
         "description": "Personal blog exploring web development, programming insights, and tech adventures.",
-        "url": "",
+        "url": "https://triccs.github.io/blog/",
+        "publisher": {
+            "@type": "Organization",
+            "name": "BraneTrix",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://triccs.github.io/blog/images/og-default.svg"
+            }
+        },
         "author": {
             "@type": "Person",
-            "name": "Your Name"
-        }
+            "name": "BraneTrix",
+            "url": "https://triccs.github.io/blog/"
+        },
+        "copyrightHolder": {
+            "@type": "Person",
+            "name": "BraneTrix"
+        },
+        "copyrightYear": "2026"
     }
     </script>
 </head>
@@ -52,7 +71,7 @@
         <nav class="nav-container">
             <a href="index.html" class="logo">
                 <span class="logo-bracket">{</span>
-                <span class="logo-text">DevLog</span>
+                <span class="logo-text">BraneTrix</span>
                 <span class="logo-bracket">}</span>
             </a>
             <ul class="nav-links">
@@ -64,7 +83,7 @@
 
     <main class="main-content">
         <section class="hero">
-            <h1 class="hero-title">Welcome to <span class="highlight">DevLog</span></h1>
+            <h1 class="hero-title">Welcome to <span class="highlight">BraneTrix</span></h1>
             <p class="hero-subtitle">Exploring code, creativity, and the craft of building things.</p>
         </section>
 
@@ -81,7 +100,7 @@
     </main>
 
     <footer class="site-footer">
-        <p>&copy; 2026 DevLog. Built with vanilla HTML, CSS & JS.</p>
+        <p>&copy; 2026 BraneTrix. Built with vanilla HTML, CSS & JS.</p>
     </footer>
 
     <script src="js/posts.js" defer></script>

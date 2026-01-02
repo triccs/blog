@@ -284,7 +284,7 @@ function renderSinglePost(postId) {
     }
     
     // Update page title
-    document.title = `${post.title} | DevLog`;
+    document.title = `${post.title} | BraneTrix`;
     
     // Update meta description
     const metaDesc = document.querySelector('meta[name="description"]');

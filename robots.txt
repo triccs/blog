@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Help LLMs and crawlers identify the source
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+Sitemap: https://triccs.github.io/blog/sitemap.xml
+

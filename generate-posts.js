@@ -33,14 +33,20 @@ posts.forEach(post => {
         .replace(/<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${post.title.replace(/"/g, '&quot;')}"`)
         .replace(/<meta name="twitter:description" content="[^"]*"/, `<meta name="twitter:description" content="${post.excerpt.replace(/"/g, '&quot;')}"`)
         .replace(/<meta name="twitter:image" content="[^"]*"/, `<meta name="twitter:image" content="${imagePath}"`)
-        .replace(/<title>[^<]*<\/title>/, `<title>${post.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')} | DevLog</title>`)
+        .replace(/<title>[^<]*<\/title>/, `<title>${post.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')} | BraneTrix</title>`)
         .replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${post.excerpt.replace(/"/g, '&quot;')}"`)
         .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${baseUrl}/posts/${post.id}.html"`)
         // Fix paths for files in posts/ subdirectory
         .replace(/href="index\.html"/g, 'href="../index.html"')
         .replace(/href="about\.html"/g, 'href="../about.html"')
         .replace(/href="css\//g, 'href="../css/')
-        .replace(/src="js\//g, 'src="../js/');
+        .replace(/src="js\//g, 'src="../js/')
+        // Replace DevLog with BraneTrix
+        .replace(/DevLog/g, 'BraneTrix')
+        .replace(/Your Name/g, 'BraneTrix')
+        // Add author meta tag if missing
+        .replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${post.excerpt.replace(/"/g, '&quot;')}"`)
+        .replace(/(<meta name="description"[^>]*>)/, `$1\n    <meta name="author" content="BraneTrix">`);
     
     // Write the generated file
     const outputPath = `posts/${post.id}.html`;

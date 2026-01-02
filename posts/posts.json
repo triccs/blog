@@ -1,8 +1,8 @@
 {
     "siteInfo": {
-        "name": "DevLog",
+        "name": "BraneTrix",
         "tagline": "A Developer's Journal",
-        "author": "Your Name",
+        "author": "BraneTrix",
         "baseUrl": "https://triccs.github.io/blog"
     },
     "posts": [

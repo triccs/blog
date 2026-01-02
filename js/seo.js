@@ -4,8 +4,8 @@
  * This enables proper link previews when sharing on social media
  */
 
-const SITE_NAME = 'DevLog';
-const AUTHOR_NAME = 'Your Name';
+const SITE_NAME = 'BraneTrix';
+const AUTHOR_NAME = 'BraneTrix';
 
 /**
  * Update all SEO meta tags for a specific post
@@ -173,6 +173,7 @@ function updateCanonical(url) {
  * Update JSON-LD structured data for articles
  */
 function updateJsonLd(post, postUrl, imageUrl) {
+    const baseUrl = window.location.origin + (window.location.hostname.includes('github.io') ? '/blog' : '');
     const schema = {
         '@context': 'https://schema.org',
         '@type': 'Article',
@@ -183,14 +184,18 @@ function updateJsonLd(post, postUrl, imageUrl) {
         'dateModified': post.date,
         'author': {
             '@type': 'Person',
-            'name': AUTHOR_NAME
+            'name': AUTHOR_NAME,
+            'url': baseUrl,
+            'sameAs': baseUrl
         },
         'publisher': {
             '@type': 'Organization',
             'name': SITE_NAME,
+            'alternateName': 'BraneTrix Blog',
+            'url': baseUrl,
             'logo': {
                 '@type': 'ImageObject',
-                'url': `${window.location.origin}/images/logo.png`
+                'url': `${baseUrl}/images/og-default.svg`
             }
         },
         'mainEntityOfPage': {
@@ -199,7 +204,14 @@ function updateJsonLd(post, postUrl, imageUrl) {
         },
         'keywords': post.tags.join(', '),
         'wordCount': estimateWordCount(post.content),
-        'timeRequired': `PT${post.readingTime}M`
+        'timeRequired': `PT${post.readingTime}M`,
+        'copyrightHolder': {
+            '@type': 'Person',
+            'name': AUTHOR_NAME
+        },
+        'copyrightYear': new Date(post.date).getFullYear().toString(),
+        'inLanguage': 'en-US',
+        'isAccessibleForFree': true
     };
     
     // Update the existing script tag or create a new one
