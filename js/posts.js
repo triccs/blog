@@ -6,12 +6,26 @@
 // Get base path for GitHub Pages subdirectory
 function getBasePath() {
     const path = window.location.pathname;
-    const cleanPath = path.replace(/\/$/, '');
-    const parts = cleanPath.split('/').filter(p => p);
+    const hostname = window.location.hostname;
     
-    if (parts.length > 0 && parts[0] === 'blog') {
-        return '/blog';
+    // Check if we're on GitHub Pages (triccs.github.io)
+    if (hostname.includes('github.io')) {
+        // Extract repo name from path or hostname
+        const cleanPath = path.replace(/\/$/, '');
+        const parts = cleanPath.split('/').filter(p => p);
+        
+        // If path starts with a segment that's not an HTML file, it's likely the repo name
+        if (parts.length > 0 && parts[0] !== '' && !parts[0].endsWith('.html')) {
+            return '/' + parts[0];
+        }
+        
+        // Fallback: check hostname for repo name
+        // triccs.github.io/blog means repo is "blog"
+        if (hostname.startsWith('triccs.github.io')) {
+            return '/blog';
+        }
     }
+    
     return '';
 }
 
@@ -22,9 +36,17 @@ function resolveImagePath(imagePath) {
         return imagePath;
     }
     
+    // Get base path for GitHub Pages
+    const basePath = getBasePath();
+    console.log('Resolving image path:', imagePath);
+    console.log('Current pathname:', window.location.pathname);
+    console.log('Base path detected:', basePath);
+    
     // If it starts with /, it's an absolute path - add base path for GitHub Pages
     if (imagePath.startsWith('/')) {
-        return getBasePath() + imagePath;
+        const resolved = basePath + imagePath;
+        console.log('Resolved absolute path:', resolved);
+        return resolved;
     }
     
     // Relative path - resolve from current page location
@@ -35,7 +57,9 @@ function resolveImagePath(imagePath) {
     } else if (!currentPath.endsWith('/')) {
         dir = currentPath + '/';
     }
-    return dir + imagePath;
+    const resolved = dir + imagePath;
+    console.log('Resolved relative path:', resolved);
+    return resolved;
 }
 
 // Get posts URL - use relative path that works everywhere
