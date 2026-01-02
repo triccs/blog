@@ -3,7 +3,18 @@
  * Handles loading, rendering, and filtering blog posts
  */
 
-const POSTS_URL = '/posts/posts.json';
+// Get base path for GitHub Pages subdirectory support
+function getBasePath() {
+    const path = window.location.pathname;
+    // Check if we're in a subdirectory (like /blog/)
+    if (path.startsWith('/blog/') || path === '/blog') {
+        return '/blog';
+    }
+    // For local development or root deployment
+    return '';
+}
+
+const POSTS_URL = getBasePath() + '/posts/posts.json';
 
 // State
 let allPosts = [];
