@@ -12,6 +12,32 @@ const AUTHOR_NAME = 'Your Name';
  * Called from posts.js when rendering a single post
  * @param {Object} post - The post object with title, excerpt, coverImage, date, tags
  */
+// Get base path for GitHub Pages subdirectory
+function getBasePath() {
+    const path = window.location.pathname;
+    const hostname = window.location.hostname;
+    
+    // Check if we're on GitHub Pages (triccs.github.io)
+    if (hostname.includes('github.io')) {
+        // Extract repo name from path or hostname
+        const cleanPath = path.replace(/\/$/, '');
+        const parts = cleanPath.split('/').filter(p => p);
+        
+        // If path starts with a segment that's not an HTML file, it's likely the repo name
+        if (parts.length > 0 && parts[0] !== '' && !parts[0].endsWith('.html')) {
+            return '/' + parts[0];
+        }
+        
+        // Fallback: check hostname for repo name
+        // triccs.github.io/blog means repo is "blog"
+        if (hostname.startsWith('triccs.github.io')) {
+            return '/blog';
+        }
+    }
+    
+    return '';
+}
+
 // Resolve image path - handles both absolute and relative paths
 function resolveImagePath(imagePath) {
     // If it's already a full URL, return as-is
@@ -19,11 +45,8 @@ function resolveImagePath(imagePath) {
         return imagePath;
     }
     
-    // Get base path for GitHub Pages subdirectory
-    const path = window.location.pathname;
-    const cleanPath = path.replace(/\/$/, '');
-    const parts = cleanPath.split('/').filter(p => p);
-    const basePath = parts.length > 0 && parts[0] === 'blog' ? '/blog' : '';
+    // Get base path for GitHub Pages
+    const basePath = getBasePath();
     const baseUrl = window.location.origin + basePath;
     
     // If it starts with /, it's an absolute path - add base path for GitHub Pages
