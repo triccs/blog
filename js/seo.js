@@ -44,7 +44,9 @@ function resolveImagePath(imagePath) {
     
     // If it starts with /, it's an absolute path - add base path for GitHub Pages
     if (imagePath.startsWith('/')) {
-        return baseUrl + imagePath;
+        const fullUrl = baseUrl + imagePath;
+        console.log('Resolved image path:', imagePath, '->', fullUrl);
+        return fullUrl;
     }
     
     // Relative path - resolve from current page location
@@ -55,16 +57,22 @@ function resolveImagePath(imagePath) {
     } else if (!currentPath.endsWith('/')) {
         dir = currentPath + '/';
     }
-    return window.location.origin + dir + imagePath;
+    const fullUrl = window.location.origin + dir + imagePath;
+    console.log('Resolved relative image path:', imagePath, '->', fullUrl);
+    return fullUrl;
 }
 
 function updateSEO(post) {
     // Get base URL - handle GitHub Pages subdirectory
-    const pathParts = window.location.pathname.split('/').filter(p => p);
-    const basePath = pathParts.length > 0 && pathParts[0] === 'blog' ? '/blog' : '';
+    const basePath = getBasePath();
     const baseUrl = window.location.origin + basePath;
     const postUrl = `${baseUrl}/post.html?id=${post.id}`;
     const imageUrl = resolveImagePath(post.coverImage);
+    
+    console.log('Updating SEO for post:', post.title);
+    console.log('Base URL:', baseUrl);
+    console.log('Post URL:', postUrl);
+    console.log('Image URL:', imageUrl);
     
     // Update page title (browser tab)
     document.title = `${post.title} | ${SITE_NAME}`;
