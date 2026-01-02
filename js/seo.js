@@ -88,6 +88,14 @@ function updateSEO(post) {
     updateMetaProperty('og:type', 'article');
     updateMetaProperty('og:site_name', SITE_NAME);
     
+    // Log what we're setting for debugging
+    console.log('OG tags set:', {
+        title: post.title,
+        description: post.excerpt,
+        image: imageUrl,
+        url: postUrl
+    });
+    
     // Add article-specific OG tags
     updateMetaProperty('article:published_time', post.date);
     updateMetaProperty('article:author', AUTHOR_NAME);
