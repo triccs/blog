@@ -3,7 +3,7 @@
         "name": "DevLog",
         "tagline": "A Developer's Journal",
         "author": "Your Name",
-        "baseUrl": ""
+        "baseUrl": "https://triccs.github.io/blog"
     },
     "posts": [
         {

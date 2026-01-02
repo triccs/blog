@@ -13,7 +13,10 @@ const AUTHOR_NAME = 'Your Name';
  * @param {Object} post - The post object with title, excerpt, coverImage, date, tags
  */
 function updateSEO(post) {
-    const baseUrl = window.location.origin;
+    // Get base URL - handle GitHub Pages subdirectory
+    const pathParts = window.location.pathname.split('/').filter(p => p);
+    const basePath = pathParts.length > 1 ? '/' + pathParts[0] : '';
+    const baseUrl = window.location.origin + basePath;
     const postUrl = `${baseUrl}/post.html?id=${post.id}`;
     const imageUrl = post.coverImage.startsWith('http') 
         ? post.coverImage 
