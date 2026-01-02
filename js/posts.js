@@ -223,9 +223,11 @@ function renderPosts(posts) {
     
     grid.innerHTML = posts.map(post => {
         const imageUrl = resolveImagePath(post.coverImage);
+        // Use static HTML file for better SEO/crawler support
+        const postUrl = getBasePath() + '/posts/' + post.id + '.html';
         return `
         <article class="post-card">
-            <a href="post.html?id=${post.id}" class="post-card-link">
+            <a href="${postUrl}" class="post-card-link">
                 <div class="post-card-image">
                     <img 
                         src="${imageUrl}" 
@@ -240,7 +242,7 @@ function renderPosts(posts) {
                     <span class="post-card-reading-time">${post.readingTime} min read</span>
                 </div>
                 <h2 class="post-card-title">
-                    <a href="post.html?id=${post.id}">${post.title}</a>
+                    <a href="${postUrl}">${post.title}</a>
                 </h2>
                 <p class="post-card-excerpt">${post.excerpt}</p>
                 <div class="post-card-tags">
