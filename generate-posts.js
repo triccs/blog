@@ -29,13 +29,18 @@ posts.forEach(post => {
         .replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${post.title.replace(/"/g, '&quot;')}"`)
         .replace(/<meta property="og:description" content="[^"]*"/, `<meta property="og:description" content="${post.excerpt.replace(/"/g, '&quot;')}"`)
         .replace(/<meta property="og:image" content="[^"]*"/, `<meta property="og:image" content="${imagePath}"`)
-        .replace(/<meta property="og:url" content="[^"]*"/, `<meta property="og:url" content="${postUrl}"`)
+        .replace(/<meta property="og:url" content="[^"]*"/, `<meta property="og:url" content="${baseUrl}/posts/${post.id}.html"`)
         .replace(/<meta name="twitter:title" content="[^"]*"/, `<meta name="twitter:title" content="${post.title.replace(/"/g, '&quot;')}"`)
         .replace(/<meta name="twitter:description" content="[^"]*"/, `<meta name="twitter:description" content="${post.excerpt.replace(/"/g, '&quot;')}"`)
         .replace(/<meta name="twitter:image" content="[^"]*"/, `<meta name="twitter:image" content="${imagePath}"`)
         .replace(/<title>[^<]*<\/title>/, `<title>${post.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')} | DevLog</title>`)
         .replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${post.excerpt.replace(/"/g, '&quot;')}"`)
-        .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${postUrl}"`);
+        .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${baseUrl}/posts/${post.id}.html"`)
+        // Fix paths for files in posts/ subdirectory
+        .replace(/href="index\.html"/g, 'href="../index.html"')
+        .replace(/href="about\.html"/g, 'href="../about.html"')
+        .replace(/href="css\//g, 'href="../css/')
+        .replace(/src="js\//g, 'src="../js/');
     
     // Write the generated file
     const outputPath = `posts/${post.id}.html`;
