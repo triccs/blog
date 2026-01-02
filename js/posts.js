@@ -59,6 +59,11 @@ function resolveImagePath(imagePath) {
 function getPostsUrl() {
     let currentPath = window.location.pathname;
     
+    // If we're in /posts/ subdirectory, go up one level
+    if (currentPath.includes('/posts/')) {
+        return '../posts/posts.json';
+    }
+    
     // Ensure path ends with / for directory resolution
     if (!currentPath.endsWith('/') && !currentPath.includes('.')) {
         currentPath += '/';
