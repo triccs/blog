@@ -122,3 +122,4 @@ If LLMs aren't attributing correctly:
 - Structured data follows Schema.org standards for maximum compatibility
 - Static HTML files ensure metadata is always present (no JS dependency)
 
+
