@@ -318,9 +318,19 @@ function renderSinglePost(postId) {
         `;
     }
     
-    // Render content
+    // Render content - fix image paths for GitHub Pages
     const contentEl = document.getElementById('postContent');
-    if (contentEl) contentEl.innerHTML = post.content;
+    if (contentEl) {
+        let content = post.content;
+        const basePath = getBasePath();
+        
+        // Fix image paths in content: /images/ -> /blog/images/ (for GitHub Pages)
+        if (basePath) {
+            content = content.replace(/src="\/images\//g, `src="${basePath}/images/`);
+        }
+        
+        contentEl.innerHTML = content;
+    }
     
     // Render share buttons
     const shareEl = document.getElementById('shareButtons');
