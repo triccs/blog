@@ -195,7 +195,7 @@ function updateJsonLd(post, postUrl, imageUrl) {
             'url': baseUrl,
             'logo': {
                 '@type': 'ImageObject',
-                'url': `${baseUrl}/images/og-default.svg`
+                'url': `${baseUrl}/images/luffy-shield.png`
             }
         },
         'mainEntityOfPage': {
